@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import TopicPicker from './components/TopicPicker'
+import TopicPicker, { type SelectedTopic } from './components/TopicPicker'
 import DebatePlayer from './components/DebatePlayer'
 
 interface ScriptLine {
@@ -16,12 +16,12 @@ interface Clip {
 type Stage = 'picking' | 'generating' | 'synthesizing' | 'ready'
 
 export default function App() {
-  const [topic, setTopic] = useState<string | null>(null)
+  const [selected, setSelected] = useState<SelectedTopic | null>(null)
   const [stage, setStage] = useState<Stage>('picking')
   const [clips, setClips] = useState<Clip[] | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  async function generate(selectedTopic: string) {
+  async function generate(s: SelectedTopic) {
     setError(null)
     setClips(null)
 
@@ -31,7 +31,7 @@ export default function App() {
       const r = await fetch('/api/debate/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic: selectedTopic }),
+        body: JSON.stringify({ topic: s.title, body: s.body, comments: s.comments }),
       })
       const d = await r.json()
       if (!r.ok) throw new Error(d.detail)
@@ -60,7 +60,7 @@ export default function App() {
   }
 
   function reset() {
-    setTopic(null)
+    setSelected(null)
     setClips(null)
     setError(null)
     setStage('picking')
@@ -68,27 +68,23 @@ export default function App() {
 
   const loading = stage === 'generating' || stage === 'synthesizing'
 
-  if (stage === 'ready' && clips) {
+  if (stage === 'ready' && clips && selected) {
     return (
       <div className="min-h-screen bg-background">
         <div className="max-w-2xl mx-auto px-4 py-10 flex flex-col gap-6">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={reset}
-              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-            >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M9 1L3 7l6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              back
-            </button>
-          </div>
-
+          <button
+            onClick={reset}
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer w-fit"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M9 1L3 7l6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            back
+          </button>
           <div>
             <h1 className="text-2xl font-semibold text-foreground tracking-tight">gooseTakes.fm</h1>
-            <p className="text-sm text-muted-foreground mt-1 line-clamp-1">"{topic}"</p>
+            <p className="text-sm text-muted-foreground mt-1 line-clamp-1">"{selected.title}"</p>
           </div>
-
           <DebatePlayer clips={clips} />
         </div>
       </div>
@@ -98,8 +94,6 @@ export default function App() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-2xl mx-auto px-4 py-10 flex flex-col gap-8">
-
-        {/* header */}
         <div>
           <h1 className="text-3xl font-semibold text-foreground tracking-tight">gooseTakes.fm</h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -115,19 +109,18 @@ export default function App() {
             </p>
           </div>
         ) : (
-          <TopicPicker onSelect={(t) => setTopic(t)} />
+          <TopicPicker onSelect={(t) => setSelected(t)} />
         )}
 
         {error && <p className="text-sm text-destructive text-center">{error}</p>}
 
-        {/* sticky generate button */}
-        {topic && !loading && (
+        {selected && !loading && (
           <div className="sticky bottom-6">
             <button
-              onClick={() => generate(topic)}
+              onClick={() => generate(selected)}
               className="w-full py-3.5 rounded-2xl bg-primary text-primary-foreground font-medium text-sm shadow-lg hover:opacity-90 transition-opacity cursor-pointer"
             >
-              generate debate about "{topic.length > 50 ? topic.slice(0, 50) + '…' : topic}"
+              generate debate about "{selected.title.length > 50 ? selected.title.slice(0, 50) + '…' : selected.title}"
             </button>
           </div>
         )}

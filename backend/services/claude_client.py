@@ -40,12 +40,18 @@ def parse_script(text: str) -> list[dict]:
     return lines
 
 
-async def generate_debate(topic: str) -> list[dict]:
+async def generate_debate(topic: str, body: str | None = None, comments: list[str] | None = None) -> list[dict]:
+    user_content = f"topic: {topic}"
+    if body:
+        user_content += f"\n\npost body: {body}"
+    if comments:
+        user_content += f"\n\ntop comments:\n" + "\n".join(f"- {c}" for c in comments)
+
     message = client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=1024,
         system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": f"topic: {topic}"}],
+        messages=[{"role": "user", "content": user_content}],
     )
     raw = message.content[0].text
     return parse_script(raw)
