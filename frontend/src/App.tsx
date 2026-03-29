@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import TopicPicker from './components/TopicPicker'
+import DebatePlayer from './components/DebatePlayer'
 
 interface ScriptLine {
   speaker: 'TRUMP' | 'ELON' | 'GORDON'
@@ -10,12 +11,6 @@ interface Clip {
   speaker: 'TRUMP' | 'ELON' | 'GORDON'
   line: string
   audio_url: string
-}
-
-const SPEAKER_COLOR: Record<string, string> = {
-  TRUMP: 'text-red-400',
-  ELON: 'text-blue-400',
-  GORDON: 'text-orange-400',
 }
 
 type Stage = 'idle' | 'generating' | 'synthesizing'
@@ -90,21 +85,7 @@ export default function App() {
 
       {error && <p className="text-destructive text-sm">{error}</p>}
 
-      {script && (
-        <div className="flex flex-col gap-3 w-full max-w-2xl">
-          {script.map((line, i) => (
-            <div key={i} className="flex gap-3 items-start">
-              <span className={`font-bold text-sm w-16 shrink-0 ${SPEAKER_COLOR[line.speaker]}`}>
-                {line.speaker}
-              </span>
-              <p className="text-foreground text-sm">{line.line}</p>
-              {clips?.[i] && (
-                <audio controls src={`/api${clips[i].audio_url}`} className="h-6 ml-auto shrink-0" />
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+      {clips && <DebatePlayer clips={clips} />}
     </div>
   )
 }
