@@ -39,10 +39,11 @@ export default function TopicPicker({ onSelect }: Props) {
   const [urlLoading, setUrlLoading] = useState(false)
   const [urlError, setUrlError] = useState<string | null>(null)
 
-  const [selected, setSelected] = useState<string | null>(null)
+  const [selected, setSelected] = useState<Post | null>(null)
+  const [previewed, setPreviewed] = useState<Post | null>(null)
+
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // load hot+new posts on mount
   useEffect(() => {
     fetch('/api/reddit/posts')
       .then((r) => r.json())
@@ -51,7 +52,6 @@ export default function TopicPicker({ onSelect }: Props) {
       .finally(() => setPostsLoading(false))
   }, [])
 
-  // debounced keyword search
   useEffect(() => {
     if (!keyword.trim()) {
       setSearchResults(null)
@@ -86,6 +86,7 @@ export default function TopicPicker({ onSelect }: Props) {
       if (!r.ok) throw new Error()
       const post: Post = await r.json()
       pick(post)
+      setPreviewed(post)
     } catch {
       setUrlError('failed to fetch post')
     } finally {
@@ -94,11 +95,12 @@ export default function TopicPicker({ onSelect }: Props) {
   }
 
   function pick(post: Post) {
-    setSelected(post.id)
+    setSelected(post)
     onSelect({ title: post.title, body: post.body, comments: post.comments })
   }
 
   const displayedPosts = searchResults ?? posts
+  const previewPost = previewed ?? selected
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-2xl">
@@ -153,47 +155,83 @@ export default function TopicPicker({ onSelect }: Props) {
         {urlError && <p className="text-xs text-destructive">{urlError}</p>}
       </div>
 
-      {/* area 3 — post selection */}
+      {/* area 3 — post list + preview */}
       <div className="flex flex-col gap-2">
         <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
           {searchResults ? `results for "${keyword}"` : 'hot & new posts'}
         </label>
 
-        {postsLoading && !searchResults && (
-          <div className="flex flex-col gap-1.5">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-14 rounded-xl bg-muted animate-pulse" />
+        <div className="flex gap-3 items-start">
+          {/* post list */}
+          <div className="flex flex-col gap-1.5 flex-1 min-w-0 max-h-96 overflow-y-auto pr-1">
+            {postsLoading && !searchResults && (
+              [...Array(8)].map((_, i) => (
+                <div key={i} className="h-12 rounded-xl bg-muted animate-pulse" />
+              ))
+            )}
+
+            {postsError && <p className="text-sm text-destructive">{postsError}</p>}
+            {searchResults?.length === 0 && (
+              <p className="text-sm text-muted-foreground">no results found</p>
+            )}
+
+            {displayedPosts.map((post) => (
+              <button
+                key={post.id}
+                onClick={() => pick(post)}
+                onMouseEnter={() => setPreviewed(post)}
+                onMouseLeave={() => setPreviewed(selected)}
+                className={`group text-left px-3 py-2.5 rounded-xl border transition-all cursor-pointer ${
+                  selected?.id === post.id
+                    ? 'border-primary/60 bg-primary/8 text-foreground'
+                    : 'border-transparent bg-muted/50 hover:bg-muted text-card-foreground'
+                }`}
+              >
+                <p className="text-xs leading-snug line-clamp-2">{post.title}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  ↑ {post.score.toLocaleString()} · {post.num_comments} comments
+                </p>
+              </button>
             ))}
           </div>
-        )}
 
-        {postsError && <p className="text-sm text-destructive">{postsError}</p>}
-
-        {searchResults?.length === 0 && (
-          <p className="text-sm text-muted-foreground">no results found</p>
-        )}
-
-        <div className="flex flex-col gap-1.5">
-          {displayedPosts.map((post) => (
-            <button
-              key={post.id}
-              onClick={() => pick(post)}
-              className={`group text-left px-4 py-3 rounded-xl border transition-all cursor-pointer ${
-                selected === post.id
-                  ? 'border-primary/60 bg-primary/8 text-foreground'
-                  : 'border-transparent bg-muted/50 hover:bg-muted text-card-foreground'
-              }`}
-            >
-              <p className="text-sm leading-snug line-clamp-2">{post.title}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                ↑ {post.score.toLocaleString()} · {post.num_comments} comments
-                {post.body && ' · has body'}
-              </p>
-            </button>
-          ))}
+          {/* preview panel */}
+          <div className="w-52 shrink-0 sticky top-0">
+            {previewPost ? (
+              <div className="rounded-xl border border-border bg-card p-3 flex flex-col gap-2">
+                <p className="text-xs font-medium text-foreground leading-snug">{previewPost.title}</p>
+                <div className="flex gap-2 text-xs text-muted-foreground">
+                  <span>↑ {previewPost.score.toLocaleString()}</span>
+                  <span>·</span>
+                  <span>{previewPost.num_comments} comments</span>
+                </div>
+                {previewPost.body && (
+                  <p className="text-xs text-muted-foreground leading-relaxed border-t border-border pt-2 line-clamp-6">
+                    {previewPost.body}
+                  </p>
+                )}
+                {previewPost.comments && previewPost.comments.length > 0 && (
+                  <div className="flex flex-col gap-1.5 border-t border-border pt-2">
+                    <p className="text-xs font-medium text-muted-foreground">top comments</p>
+                    {previewPost.comments.slice(0, 3).map((c, i) => (
+                      <p key={i} className="text-xs text-muted-foreground leading-relaxed line-clamp-2 pl-2 border-l border-border">
+                        {c}
+                      </p>
+                    ))}
+                  </div>
+                )}
+                {!previewPost.body && (!previewPost.comments || previewPost.comments.length === 0) && (
+                  <p className="text-xs text-muted-foreground italic">no body text</p>
+                )}
+              </div>
+            ) : (
+              <div className="rounded-xl border border-dashed border-border p-3">
+                <p className="text-xs text-muted-foreground">hover a post to preview</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
     </div>
   )
 }

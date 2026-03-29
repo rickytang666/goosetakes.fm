@@ -25,12 +25,12 @@ async def _get(client: httpx.AsyncClient, url: str) -> dict:
     return r.json()
 
 
-async def fetch_posts(limit: int = 25) -> list[dict]:
+async def fetch_posts(limit: int = 50) -> list[dict]:
     """merge hot + new, dedupe, filter by min score, sort by score"""
     async with httpx.AsyncClient(headers=HEADERS) as client:
         hot, new = await asyncio.gather(
             _get(client, f"https://www.reddit.com/r/{SUBREDDIT}/hot.json?limit={limit}"),
-            _get(client, f"https://www.reddit.com/r/{SUBREDDIT}/new.json?limit=50"),
+            _get(client, f"https://www.reddit.com/r/{SUBREDDIT}/new.json?limit=100"),
         )
 
     seen = set()
