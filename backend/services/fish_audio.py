@@ -17,7 +17,7 @@ VOICE_IDS = {
 
 SPEAKER_STYLE: dict[str, dict] = {
     "TRUMP": {
-        "prefix": "(angry)(hysterical)",
+        "prefix": "(angry)(furious)",
         "prosody": {"speed": 1.1, "volume": 5},
     },
     "ELON": {
