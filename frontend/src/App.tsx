@@ -66,61 +66,72 @@ export default function App() {
     setStage('picking')
   }
 
-  function handleTopicSelect(t: string) {
-    setTopic(t)
-  }
+  const loading = stage === 'generating' || stage === 'synthesizing'
 
   if (stage === 'ready' && clips) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center px-4 py-12 gap-8">
-        <div className="flex items-center gap-4 w-full max-w-2xl">
-          <button onClick={reset} className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-            ← back
-          </button>
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">gooseTakes.fm</h1>
+      <div className="min-h-screen bg-background">
+        <div className="max-w-2xl mx-auto px-4 py-10 flex flex-col gap-6">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={reset}
+              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M9 1L3 7l6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              back
+            </button>
+          </div>
+
+          <div>
+            <h1 className="text-2xl font-semibold text-foreground tracking-tight">gooseTakes.fm</h1>
+            <p className="text-sm text-muted-foreground mt-1 line-clamp-1">"{topic}"</p>
+          </div>
+
+          <DebatePlayer clips={clips} />
         </div>
-        <p className="text-sm text-muted-foreground max-w-2xl w-full truncate">
-          topic: <span className="text-foreground">"{topic}"</span>
-        </p>
-        <DebatePlayer clips={clips} />
       </div>
     )
   }
 
-  const loading = stage === 'generating' || stage === 'synthesizing'
-
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center px-4 py-12 gap-8">
-      <h1 className="text-4xl font-bold text-foreground tracking-tight">gooseTakes.fm</h1>
+    <div className="min-h-screen bg-background">
+      <div className="max-w-2xl mx-auto px-4 py-10 flex flex-col gap-8">
 
-      {!loading && <TopicPicker onSelect={handleTopicSelect} />}
-
-      {loading && (
-        <div className="flex flex-col items-center gap-3 py-12">
-          <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-          <p className="text-muted-foreground text-sm">
-            {stage === 'generating' ? 'writing the script...' : 'cloning voices...'}
+        {/* header */}
+        <div>
+          <h1 className="text-3xl font-semibold text-foreground tracking-tight">gooseTakes.fm</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            pick a topic, get a debate between Trump, Elon, and Gordon Ramsay
           </p>
         </div>
-      )}
 
-      {error && (
-        <div className="flex flex-col items-center gap-3">
-          <p className="text-destructive text-sm">{error}</p>
-          <button onClick={reset} className="text-sm text-muted-foreground underline cursor-pointer">
-            try again
-          </button>
-        </div>
-      )}
+        {loading ? (
+          <div className="flex flex-col items-center justify-center gap-4 py-24">
+            <div className="w-6 h-6 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+            <p className="text-sm text-muted-foreground">
+              {stage === 'generating' ? 'writing the script...' : 'cloning voices...'}
+            </p>
+          </div>
+        ) : (
+          <TopicPicker onSelect={(t) => setTopic(t)} />
+        )}
 
-      {topic && !loading && !error && (
-        <button
-          onClick={() => generate(topic)}
-          className="px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold cursor-pointer"
-        >
-          generate debate
-        </button>
-      )}
+        {error && <p className="text-sm text-destructive text-center">{error}</p>}
+
+        {/* sticky generate button */}
+        {topic && !loading && (
+          <div className="sticky bottom-6">
+            <button
+              onClick={() => generate(topic)}
+              className="w-full py-3.5 rounded-2xl bg-primary text-primary-foreground font-medium text-sm shadow-lg hover:opacity-90 transition-opacity cursor-pointer"
+            >
+              generate debate about "{topic.length > 50 ? topic.slice(0, 50) + '…' : topic}"
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
