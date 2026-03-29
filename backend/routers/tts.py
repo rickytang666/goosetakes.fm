@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from services.fish_audio import synthesize_line
+from services.fish_audio import synthesize_line, AUDIO_DIR
 import asyncio
 
 router = APIRouter(prefix="/tts")
@@ -15,8 +15,14 @@ class SynthesizeRequest(BaseModel):
     script: list[ScriptLine]
 
 
+def _clear_audio_dir():
+    for f in AUDIO_DIR.glob("*.mp3"):
+        f.unlink(missing_ok=True)
+
+
 @router.post("/synthesize")
 async def synthesize(req: SynthesizeRequest):
+    _clear_audio_dir()
     try:
         # synthesize all lines concurrently
         urls = await asyncio.gather(*[
