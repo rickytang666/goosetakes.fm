@@ -1,2 +1,7 @@
 *.md
 !README.md
+
+# env
+.env
+.env.local
+.env.*.local
