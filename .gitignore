@@ -5,3 +5,19 @@
 .env
 .env.local
 .env.*.local
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# generated audio
+backend/static/audio/
+
+# frontend
+frontend/node_modules/
+frontend/dist/
+
+# os
+.DS_Store
