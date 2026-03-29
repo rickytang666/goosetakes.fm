@@ -19,9 +19,9 @@ const SPEAKER_LABEL: Record<string, string> = {
 }
 
 const SPEAKER_COLOR: Record<string, string> = {
-  TRUMP: 'text-red-400 border-red-400',
-  ELON: 'text-blue-400 border-blue-400',
-  GORDON: 'text-orange-400 border-orange-400',
+  TRUMP: 'text-red-400',
+  ELON: 'text-blue-400',
+  GORDON: 'text-orange-400',
 }
 
 export default function DebatePlayer({ clips }: Props) {
@@ -43,7 +43,6 @@ export default function DebatePlayer({ clips }: Props) {
 
     const audio = new Audio(`/api${clips[index].audio_url}`)
     audioRef.current = audio
-
     audio.onended = () => playClip(index + 1)
     audio.play()
   }
@@ -61,7 +60,7 @@ export default function DebatePlayer({ clips }: Props) {
     setCurrentIndex(null)
   }
 
-  // ensure all videos loop and play silently
+  // all videos loop silently in background — only one is visible at a time
   useEffect(() => {
     SPEAKERS.forEach((s) => {
       const v = videoRefs.current[s]
@@ -76,28 +75,35 @@ export default function DebatePlayer({ clips }: Props) {
 
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-2xl">
-      {/* video panels */}
-      <div className="grid grid-cols-3 gap-3 w-full">
+      {/* active speaker video — only the current speaker is shown */}
+      <div className="relative w-full max-w-sm rounded-xl overflow-hidden bg-muted aspect-square">
         {SPEAKERS.map((speaker) => (
-          <div
+          <video
             key={speaker}
-            className={`relative rounded-xl overflow-hidden border-2 transition-all duration-150 ${
-              activeSpeaker === speaker ? `border-current ${SPEAKER_COLOR[speaker]} scale-105` : 'border-transparent'
+            ref={(el) => { videoRefs.current[speaker] = el }}
+            src={`/videos/${speaker.toLowerCase()}.mp4`}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-150 ${
+              activeSpeaker === speaker ? 'opacity-100' : 'opacity-0'
             }`}
-          >
-            <video
-              ref={(el) => { videoRefs.current[speaker] = el }}
-              src={`/videos/${speaker.toLowerCase()}.mp4`}
-              className="w-full aspect-square object-cover"
-              playsInline
-            />
-            <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-center py-1">
-              <span className={`text-xs font-bold ${SPEAKER_COLOR[speaker].split(' ')[0]}`}>
-                {SPEAKER_LABEL[speaker]}
-              </span>
-            </div>
-          </div>
+            playsInline
+          />
         ))}
+
+        {/* speaker name overlay */}
+        {activeSpeaker && (
+          <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-center py-2">
+            <span className={`text-sm font-bold ${SPEAKER_COLOR[activeSpeaker]}`}>
+              {SPEAKER_LABEL[activeSpeaker]}
+            </span>
+          </div>
+        )}
+
+        {/* idle state */}
+        {!activeSpeaker && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-muted-foreground text-sm">press play</span>
+          </div>
+        )}
       </div>
 
       {/* controls */}
@@ -117,7 +123,7 @@ export default function DebatePlayer({ clips }: Props) {
               currentIndex === i ? 'bg-muted' : ''
             }`}
           >
-            <span className={`font-bold text-xs w-16 shrink-0 ${SPEAKER_COLOR[clip.speaker].split(' ')[0]}`}>
+            <span className={`font-bold text-xs w-16 shrink-0 ${SPEAKER_COLOR[clip.speaker]}`}>
               {clip.speaker}
             </span>
             <p className={`text-sm ${currentIndex === i ? 'text-foreground' : 'text-muted-foreground'}`}>
