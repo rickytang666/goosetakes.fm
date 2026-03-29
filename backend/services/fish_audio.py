@@ -10,9 +10,9 @@ FISH_API_KEY = os.getenv("FISH_AUDIO_API_KEY")
 FISH_TTS_URL = "https://api.fish.audio/v1/tts"
 
 VOICE_IDS = {
-    "TRUMP": "monkey",
-    "ELON": "monkey",
-    "GORDON": "monkey",
+    "TRUMP": "76122219d4ce4c69a572e80c945c747d",
+    "ELON": "03397b4c4be74759b72533b663fbd001",
+    "GORDON": "e605a2a42b0a44ccb7af2e42e1676c92",
 }
 
 AUDIO_DIR = Path(__file__).parent.parent / "static" / "audio"
