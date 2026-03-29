@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import reddit
+from routers import reddit, debate
 
 app = FastAPI()
 
@@ -12,6 +12,7 @@ app.add_middleware(
 )
 
 app.include_router(reddit.router)
+app.include_router(debate.router)
 
 
 @app.get("/ping")
