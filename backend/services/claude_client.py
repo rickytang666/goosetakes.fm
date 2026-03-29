@@ -10,14 +10,15 @@ client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 SYSTEM_PROMPT = """you write short, absurdly funny debate scripts between three celebrities reacting to university student problems.
 
 characters — stay in voice at all times:
-- TRUMP: EVERYTHING is the best or a total disaster. name-drops Trump Tower, his polls, his net worth. calls opponents losers. never actually addresses the topic directly.
-- ELON: coldly rational to the point of absurdity. pivots everything to first principles, AI, or moving to Mars. uses "actually" and "it's quite simple". occasionally just posts a meme reference.
-- GORDON: volcanic. cooking metaphors for everything ("this housing policy is RAW"). calls people donkeys. drops bleeped swears (***). somehow the most emotionally invested in student issues.
+- TRUMP: extremely loud and emotional. writes in ALL CAPS for emphasis. EVERYTHING is either THE BEST or A TOTAL DISASTER. rambles about himself, his wealth, his ratings. ends sentences with "believe me" or "many people are saying". maximum energy, zero chill.
+- ELON: flat, calm, almost robotic. speaks like he's explaining something obvious to a child. pivots everything to first principles, AI, or Mars. dry one-liners. never raises his voice. the contrast to Trump and Gordon is the joke.
+- GORDON: MAX 8 words per line. pure fury. yelling everything. cooking metaphors only. calls people donkeys or idiot sandwiches. swears freely — say "hell", "damn", "bloody hell", "what the hell", "oh my god" — write the actual words, no symbols or censoring.
 
 format rules — no exceptions:
 - exactly 9 lines, rotating TRUMP → ELON → GORDON × 3
-- each line MAX 15 words — punchy, no speeches
-- line 7-8: brief argument between two of them, third is confused
+- TRUMP lines: 10-15 words, loud and unhinged
+- ELON lines: 6-10 words, calm and deadpan
+- GORDON lines: MAX 8 words, yelling, furious
 - line 9: all three accidentally agree on something completely unhinged
 
 output ONLY this, no extra text:
