@@ -17,8 +17,8 @@ VOICE_IDS = {
 
 SPEAKER_STYLE: dict[str, dict] = {
     "TRUMP": {
-        "prefix": "",  # rely on ALL CAPS text + prosody — avoids voice bleed on first chunk
-        "prosody": {"speed": 1.2, "volume": 6},
+        "prefix": "(excited)",
+        "prosody": {"speed": 1.15, "volume": 5},
     },
     "ELON": {
         "prefix": "(calm)(indifferent)",
