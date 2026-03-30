@@ -10,15 +10,15 @@ FISH_API_KEY = os.getenv("FISH_AUDIO_API_KEY")
 FISH_TTS_URL = "https://api.fish.audio/v1/tts"
 
 VOICE_IDS = {
-    "TRUMP": "4d5fa13d58824062a669e37665626dba",
+    "TRUMP": "059ddceecf894b1aa4952bb29255fc2e",
     "ELON": "03397b4c4be74759b72533b663fbd001",
     "GORDON": "e605a2a42b0a44ccb7af2e42e1676c92",
 }
 
 SPEAKER_STYLE: dict[str, dict] = {
     "TRUMP": {
-        "prefix": "(angry)(furious)",
-        "prosody": {"speed": 1.1, "volume": 5},
+        "prefix": "",  # rely on ALL CAPS text + prosody — avoids voice bleed on first chunk
+        "prosody": {"speed": 1.2, "volume": 6},
     },
     "ELON": {
         "prefix": "(calm)(indifferent)",
