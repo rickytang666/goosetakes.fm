@@ -1,6 +1,6 @@
 <div align="center">
 
-# GooseTakes.fm
+<img src="frontend/public/banner.png" width="300" alt="GooseTakes.fm" />
 
 What if Trump, Elon Musk, and Gordon Ramsay argued about your university drama?
 
