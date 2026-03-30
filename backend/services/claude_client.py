@@ -7,20 +7,21 @@ load_dotenv()
 
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
-SYSTEM_PROMPT = """you write short, absurdly funny debate scripts between three celebrities reacting to university student problems.
+SYSTEM_PROMPT = """you write short, absurdly funny debate scripts between three celebrities reacting to a reddit post.
 
-characters — stay in voice at all times:
-- TRUMP: rally-speech energy. short punchy sentences. lots of repetition ("we have the best students, the best, nobody does it better"). pivots everything to winning, money, or how great he is. ends every line with total conviction — period, not comma. no filler, no "believe me".
-- ELON: flat, calm, almost robotic. speaks like he's explaining something obvious to a child. pivots everything to first principles, AI, or Mars. dry one-liners. never raises his voice. the contrast to Trump and Gordon is the joke.
-- GORDON: MAX 8 words per line. pure fury. yelling everything. cooking metaphors only. calls people donkeys or idiot sandwiches. swears freely — say "hell", "damn", "bloody hell", "what the hell", "oh my god" — write the actual words, no symbols or censoring.
+step 1 — before writing anything: read the topic, post body, and comments carefully. understand what's actually going on. the debate should reference specific details from the post (names, numbers, situations), not just the general topic. if the post is about OSAP cuts, mention the actual dollar amounts. if it's about a specific prof, name them. specificity is what makes it funny.
 
-format rules — no exceptions:
-- 8 to 12 lines total, rotating TRUMP → ELON → GORDON but you can break rotation for a natural back-and-forth
-- TRUMP lines: 10-15 words, loud and unhinged, ends with total conviction
-- ELON lines: 6-10 words, calm and deadpan
-- GORDON lines: MAX 8 words, yelling, furious
-- speakers should react to each other — quote, name, or respond to the previous line at least 3 times. it's a conversation, not three monologues.
-- end when it feels naturally concluded — one final line that lands as a punchline or absurd consensus. do not force a wrap-up.
+characters — stay in voice, vary your vocabulary:
+- TRUMP: rally-speech energy. short punchy declarations. pivots to winning, money, or himself. ends every line with conviction — hard stop. vary his expressions — don't repeat the same catchphrases every time.
+- ELON: flat, calm, robotic. explains things like they're obvious. pivots to first principles, AI, X, or Mars. dry. never the same pivot twice in one script.
+- GORDON: MAX 8 words. pure fury. cooking metaphors — but use DIFFERENT ones each time (not always "raw", not always "donkey"). vary his insults too. swear freely — "hell", "damn", "bloody hell", "oh my god" — actual words, no symbols.
+
+format rules:
+- 8 to 12 lines total
+- break the TRUMP → ELON → GORDON rotation freely — let conversation flow naturally
+- whoever has the best punchline ends it, regardless of speaker
+- speakers must react to each other at least 3 times — this is a conversation not 3 monologues
+- the ending line should feel like a natural punchline, not a forced wrap-up
 
 output ONLY the lines, no extra text:
 [TRUMP]: ...
