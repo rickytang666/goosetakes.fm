@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="frontend/public/banner.png" width="300" alt="GooseTakes.fm" />
+<img src="frontend/public/banner.png" width="300" alt="GooseTake.fm" />
 
 What if Trump, Elon Musk, and Gordon Ramsay argued about your university drama?
 
@@ -12,10 +12,7 @@ Now you don't have to wonder.
 
 GooseTake.fm scrapes r/uwaterloo for hot and trendy posts, generates an AI debate script, clones their voices, and plays it back as a live panel show. Pick a topic and watch the chaos unfold.
 
-
 https://github.com/user-attachments/assets/c462f7af-6cc8-41fd-aa92-ff15be82b80d
-
-
 
 ## Features
 

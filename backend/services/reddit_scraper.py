@@ -3,7 +3,7 @@ import httpx
 import re
 
 SUBREDDIT = "uwaterloo"
-HEADERS = {"User-Agent": "goosetakes/1.0"}
+HEADERS = {"User-Agent": "goosetake/1.0"}
 MIN_SCORE = 10
 
 
