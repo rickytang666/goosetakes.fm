@@ -10,7 +10,12 @@ Now you don't have to wonder.
 
 ---
 
-Scrapes r/uwaterloo for hot posts, generates an AI debate script, clones their voices, and plays it back as a live panel show. Pick a topic in under 60 seconds and watch the chaos unfold.
+GooseTake.fm scrapes r/uwaterloo for hot and trendy posts, generates an AI debate script, clones their voices, and plays it back as a live panel show. Pick a topic and watch the chaos unfold.
+
+
+https://github.com/user-attachments/assets/c462f7af-6cc8-41fd-aa92-ff15be82b80d
+
+
 
 ## Features
 
